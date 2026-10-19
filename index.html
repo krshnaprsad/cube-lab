@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cube Lab - make, mix and fix .cube LUTs by Zero3</title>
+<meta name="description" content="Free tool for Premiere Pro and DaVinci Resolve. Match a look from a reference picture, blend LUTs into one, and check or repair broken .cube files. Runs in your browser, nothing is uploaded.">
+<link rel="stylesheet" href="app.css?v=1.0.0">
+</head>
+<body>
+<header class="hd"><span class="logo" role="img" aria-label="Zero3 Creatives"></span><div><h1>Cube Lab</h1><p class="tag">Match a look, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve</p></div><span class="ver">v1.0.0</span></header>
+<main>
+  <div class="grid">
+    <div class="side">
+      <section class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab on" data-tab="match" role="tab">Look Match</button>
+          <button class="tab" data-tab="blend" role="tab">Blender</button>
+          <button class="tab" data-tab="doctor" role="tab">Doctor</button>
+        </div>
+
+        <div class="pane" id="pane-match">
+          <p class="note first">Pick a still with the look you want. Cube Lab builds a LUT that moves your frame toward it.</p>
+          <div class="row">
+            <button class="btn" id="refBtn">Choose reference still</button>
+            <img id="refThumb" class="thumb" alt="" hidden>
+          </div>
+          <input type="file" id="refFile" accept="image/*" hidden>
+          <label class="rng">Strength <input type="range" id="mStrength" min="0" max="1" step="0.01" value="0.85"><span id="mStrengthVal">0.85</span></label>
+          <label class="rng">Match brightness <input type="range" id="mTone" min="0" max="1" step="0.01" value="0.7"><span id="mToneVal">0.70</span></label>
+          <label class="rng">Match colour <input type="range" id="mColour" min="0" max="1" step="0.01" value="1"><span id="mColourVal">1.00</span></label>
+          <label class="chk"><input type="checkbox" id="mClean" checked> Keep blacks and whites clean</label>
+          <p class="note">Strength is how far toward the reference you go. Brightness matches the light and dark balance. Colour matches the tint and richness.</p>
+        </div>
+
+        <div class="pane" id="pane-blend" hidden>
+          <p class="note first">Stack LUTs in order and set how strong each one is. They get baked into one new file.</p>
+          <div class="row">
+            <button class="btn" id="addLutBtn">Add LUT files</button>
+            <button class="btn" id="addMatchBtn">Add my Look Match</button>
+          </div>
+          <input type="file" id="lutFile" accept=".cube,text/plain" multiple hidden>
+          <ol class="layers" id="layers"></ol>
+          <p class="note" id="blendNote">Add two or more LUTs. They run top to bottom, so put a log or colour fix first and the creative look after it.</p>
+        </div>
+
+        <div class="pane" id="pane-doctor" hidden>
+          <p class="note first">Open any .cube file. Cube Lab checks it and can save a repaired copy.</p>
+          <div class="row"><button class="btn" id="docBtn">Open a .cube file</button><span id="docName" class="dim"></span></div>
+          <input type="file" id="docFile" accept=".cube,text/plain" hidden>
+          <ul class="report" id="report"></ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Save your LUT</h2>
+        <label>File name <input type="text" id="name" value="cube-lab-look" maxlength="60"></label>
+        <label>Size <select id="size"><option value="17">17 (small, fast)</option><option value="33" selected>33 (standard)</option><option value="65">65 (finest, big file)</option></select></label>
+        <div class="row"><button class="btn go" id="dl" disabled>Download .cube</button></div>
+        <p class="msg" id="msg"></p>
+        <details class="how">
+          <summary>How to use it in your editor</summary>
+          <p><b>Premiere Pro.</b> Select the clip, open Lumetri Color, go to Creative, open the Look menu, choose Browse and pick your .cube file. The Intensity slider there works on top of the Strength you set here.</p>
+          <p><b>DaVinci Resolve.</b> Open Project Settings, then Color Management, then Open LUT Folder. Drop the file in, click Update Lists, then right-click a node on the Color page and pick it under LUT.</p>
+          <p>Both apps read the same file. Nothing here installs into an app for you, a web page is not allowed to write into your program folders.</p>
+        </details>
+      </section>
+    </div>
+
+    <section class="card stagecard">
+      <div class="row bar">
+        <button class="btn" id="footBtn">Choose your frame</button>
+        <button class="btn" id="sampleBtn">Use sample picture</button>
+        <span class="dim" id="footNote">Showing the sample picture. Drop an image here, or use the button.</span>
+      </div>
+      <input type="file" id="footFile" accept="image/*" hidden>
+      <div class="stage" id="stage">
+        <canvas id="cv" width="960" height="540"></canvas>
+        <span class="tagl">Before</span><span class="tagr">After</span>
+        <div class="empty" id="empty"></div>
+      </div>
+      <p class="note">Drag the line to compare. Best frame to use: a still exported from your timeline, the way it looks in the viewer. The preview applies the exact LUT you download.</p>
+    </section>
+  </div>
+  <p class="foot">Made by <b>Zero3</b>. Free and open source (MIT). Everything runs in your browser, nothing is uploaded. <a href="https://github.com/krshnaprsad/cube-lab">Source on GitHub</a></p>
+</main>
+<script src="cube.js?v=1.0.0"></script>
+<script src="app.js?v=1.0.0"></script>
+</body>
+</html>
