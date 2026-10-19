@@ -103,3 +103,6 @@ canvas#cv.adding{cursor:copy}
 .pre i{display:block;height:16px;border-radius:5px}
 .lnk{color:var(--text);font-size:13px;text-decoration:underline;text-underline-offset:3px}
 #hexIn{width:100%;margin-top:6px}
+.why{margin-top:18px;max-width:760px}
+.why p{margin:0 0 10px;color:#cfcfcf;font-size:14px}
+.why p:last-child{margin:0}
