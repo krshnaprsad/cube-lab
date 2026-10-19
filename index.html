@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cube Lab - make, mix and fix .cube LUTs by Zero3</title>
 <meta name="description" content="Free tool for Premiere Pro and DaVinci Resolve. Match a look from a reference picture, blend LUTs into one, and check or repair broken .cube files. Runs in your browser, nothing is uploaded.">
-<link rel="stylesheet" href="app.css?v=1.0.0">
+<link rel="stylesheet" href="app.css?v=1.0.1">
 </head>
 <body>
-<header class="hd"><span class="logo" role="img" aria-label="Zero3 Creatives"></span><div><h1>Cube Lab</h1><p class="tag">Match a look, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve</p></div><span class="ver">v1.0.0</span></header>
+<header class="hd"><span class="logo" role="img" aria-label="Zero3 Creatives"></span><div><h1>Cube Lab</h1><p class="tag">Match a look, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve</p></div><span class="ver">v1.0.1</span></header>
 <main>
   <div class="grid">
     <div class="side">
@@ -61,7 +61,7 @@
         <details class="how">
           <summary>How to use it in your editor</summary>
           <p><b>Premiere Pro.</b> Select the clip, open Lumetri Color, go to Creative, open the Look menu, choose Browse and pick your .cube file. The Intensity slider there works on top of the Strength you set here.</p>
-          <p><b>DaVinci Resolve.</b> Open Project Settings, then Color Management, then Open LUT Folder. Drop the file in, click Update Lists, then right-click a node on the Color page and pick it under LUT.</p>
+          <p><b>DaVinci Resolve.</b> Saving the file is not enough. You have to copy it INTO Resolve's LUT folder. Open Project Settings, then Color Management, then Lookup Tables, and click Open LUT Folder. Paste the .cube file into the folder that opens. (Or on the Color page, right-click in the LUTs panel and choose Reveal in File Explorer, then paste it there.) Back in Resolve, right-click the LUTs panel and choose Refresh, or restart Resolve. Then find it in the LUTs panel, or right-click a node and pick it under 3D LUT.</p>
           <p>Both apps read the same file. Nothing here installs into an app for you, a web page is not allowed to write into your program folders.</p>
         </details>
       </section>
@@ -84,7 +84,7 @@
   </div>
   <p class="foot">Made by <b>Zero3</b>. Free and open source (MIT). Everything runs in your browser, nothing is uploaded. <a href="https://github.com/krshnaprsad/cube-lab">Source on GitHub</a></p>
 </main>
-<script src="cube.js?v=1.0.0"></script>
-<script src="app.js?v=1.0.0"></script>
+<script src="cube.js?v=1.0.1"></script>
+<script src="app.js?v=1.0.1"></script>
 </body>
 </html>
