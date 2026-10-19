@@ -2,7 +2,7 @@
 
 Match a look, paint with a palette, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve.
 
-Made by Zero3.
+Made by [Zero3](https://www.zero3creatives.net/).
 
 ## Why I built Cube Lab
 
