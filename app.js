@@ -13,6 +13,7 @@
     doc: null, docName: '',
     graded: null,          // ImageData with the LUT applied
     split: 0.5,
+    stops: ['#0b1f4d', '#8458d8', '#f27fd9', '#ffe3f1'],
     lut: null              // the LUT currently previewed and exported
   };
 
@@ -62,8 +63,12 @@
   function cleanName() { return ($('name').value || 'cube-lab-look').replace(/[^\w\- .]/g, '').trim() || 'cube-lab-look'; }
   function matchOpts() { return { strength: +$('mStrength').value, tone: +$('mTone').value, colour: +$('mColour').value, keepClean: $('mClean').checked }; }
 
+  function palOpts() { return { mode: $('pMode').value, strength: +$('pStrength').value, keepClean: $('pClean').checked }; }
+  function palStops() { return $('pSort').checked ? CUBE.sortDarkToLight(st.stops) : st.stops; }
+
   function buildLUT() {
     var n = size();
+    if (st.tab === 'palette') return { lut: CUBE.paletteLook(palStops(), n, palOpts(), cleanName()) };
     if (st.tab === 'match') {
       if (!st.ref || !st.footStats) return { empty: 'Choose a reference still to see the match.' };
       return { lut: CUBE.lookMatch(st.footStats, st.refStats, n, matchOpts(), cleanName()) };
@@ -122,7 +127,7 @@
     t.addEventListener('click', function () {
       st.tab = t.getAttribute('data-tab');
       Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (x) { x.classList.toggle('on', x === t); });
-      ['match', 'blend', 'doctor'].forEach(function (k) { $('pane-' + k).hidden = k !== st.tab; });
+      ['match', 'palette', 'blend', 'doctor'].forEach(function (k) { $('pane-' + k).hidden = k !== st.tab; });
       $('msg').textContent = ''; $('msg').className = 'msg';
       refresh();
     });
@@ -154,6 +159,51 @@
     $(p[0]).oninput = function () { $(p[1]).textContent = (+$(p[0]).value).toFixed(2); refresh(); };
   });
   $('mClean').onchange = refresh;
+
+  /* ---------- Palette ---------- */
+  var GL = [{"n":"Candy Cloud","c":["#5eb6f5","#8b7cf6","#f27fd9","#5fe3d8"]},{"n":"Neon Nights","c":["#ff2e88","#2563eb","#6d28d9","#0891b2"]},{"n":"Golden Hour","c":["#f43f5e","#fb7185","#8b5cf6","#fbbf24"]},{"n":"Deep Ocean","c":["#0ea5e9","#10b981","#6366f1","#0d9488"]},{"n":"Orchid Milk","c":["#7dd3fc","#f9a8d4","#c084fc","#fda4af"]},{"n":"Aurora Silk","c":["#073b89","#252284","#1769d2","#10baac","#3f239f","#28ddd1","#42e6be","#a931bf"]},{"n":"Rose Ribbon","c":["#281164","#8458d8","#ee9bd3","#7336a4","#fa77a6","#feccdb","#7d34bb","#ffbbb5"]},{"n":"Lagoon Glass","c":["#68a5e8","#8ef5c7","#26bfc8","#50d9c6","#c6cdfa","#a6cafa","#5cb0e6","#fde4f6"]},{"n":"Silk Fold","c":["#ed3996","#4335ad","#b94fd0","#c2a4eb","#6639ba","#eef0ff"]},{"n":"Silk Curl","c":["#9fc3f2","#f5e3b0","#f2a096","#a55cc4","#f2a896","#b06fd0"]},{"n":"Pastel Sweep","c":["#ffffbe","#b7dafa","#f49e9d","#9e39e0"]},{"n":"Chromatic Flow","c":["#9d13fa","#4199f9","#4aebee","#e91df4"]}];
+  function setStops(list) { if (!list || list.length < 2) { say('Pick at least two colours.', 'err'); return; } st.stops = list.slice(0, 12); renderStops(); refresh(); }
+  function renderStops() {
+    var box = $('stops'); box.innerHTML = '';
+    st.stops.forEach(function (c, i) {
+      var d = document.createElement('div'); d.className = 'stop';
+      var inp = document.createElement('input'); inp.type = 'color'; inp.value = c; inp.setAttribute('aria-label', 'Colour ' + (i + 1));
+      inp.oninput = function () { st.stops[i] = inp.value; paintBar(); refresh(); };
+      d.appendChild(inp);
+      if (st.stops.length > 2) {
+        var x = document.createElement('button'); x.className = 'x'; x.type = 'button'; x.textContent = '\u2715'; x.setAttribute('aria-label', 'Remove colour ' + (i + 1));
+        x.onclick = function () { st.stops.splice(i, 1); renderStops(); refresh(); };
+        d.appendChild(x);
+      }
+      box.appendChild(d);
+    });
+    $('addStop').disabled = st.stops.length >= 12;
+    paintBar();
+  }
+  function paintBar() { $('gbar').style.background = 'linear-gradient(90deg,' + palStops().join(',') + ')'; }
+  GL.forEach(function (p) {
+    var b = document.createElement('button'); b.className = 'pre'; b.type = 'button'; b.title = 'Gradient Lab: ' + p.n;
+    var sw = document.createElement('i'); sw.style.background = 'linear-gradient(90deg,' + CUBE.sortDarkToLight(p.c).join(',') + ')';
+    var t = document.createElement('span'); t.textContent = p.n; b.appendChild(sw); b.appendChild(t);
+    b.onclick = function () { setStops(p.c); };
+    $('presets').appendChild(b);
+  });
+  $('addStop').onclick = function () { st.stops.push(st.stops[st.stops.length - 1]); renderStops(); refresh(); };
+  $('revStop').onclick = function () { st.stops.reverse(); $('pSort').checked = false; renderStops(); refresh(); };
+  $('frameStop').onclick = function () {
+    if (!st.foot) { say('Load a frame first.', 'err'); return; }
+    var l = CUBE.extractPalette(st.foot.data, 5);
+    if (l.length < 2) { say('That frame has only one main colour.', 'err'); return; }
+    setStops(l);
+  };
+  $('hexBtn').onclick = function () {
+    var l = CUBE.parseHexList($('hexIn').value);
+    if (l.length < 2) { say('Paste two or more hex colours, like #5eb6f5 #8b7cf6.', 'err'); return; }
+    setStops(l);
+  };
+  $('pMode').onchange = refresh; $('pSort').onchange = function () { paintBar(); refresh(); }; $('pClean').onchange = refresh;
+  $('pStrength').oninput = function () { $('pStrengthVal').textContent = (+$('pStrength').value).toFixed(2); refresh(); };
+  renderStops();
 
   /* ---------- Blender ---------- */
   $('addLutBtn').onclick = function () { $('lutFile').click(); };
