@@ -91,5 +91,19 @@ ok(C.diagnose(clip).some(x => /Highlights clip/.test(x.text)), 'clipped highligh
 const inv = C.bake(17, (a, b, c, o) => { o[0] = 1 - a; o[1] = 1 - b; o[2] = 1 - c; });
 ok(C.diagnose(inv).some(x => /backwards/.test(x.text)), 'inverted ramp flagged');
 let threw = false; try { C.parse('hello world'); } catch (e) { threw = true; } ok(threw, 'non-LUT text rejected');
+
+// palette look
+const pal = C.paletteLook(['#000000', '#ffffff'], 17, { mode: 'map', strength: 1, keepClean: false }, 'p');
+const tt = [0, 0, 0]; C.sample(pal, 0.5, 0.5, 0.5, tt, 0);
+ok(Math.abs(tt[0] - 0.5) < 0.03 && Math.abs(tt[1] - 0.5) < 0.03, 'black to white ramp keeps grey mid');
+const red = C.paletteLook(['#000000', '#ff0000'], 17, { mode: 'map', strength: 1, keepClean: true }, 'p');
+C.sample(red, 0, 0, 0, tt, 0); ok(tt[0] < 0.02 && tt[1] < 0.02, 'clean blacks stay black');
+C.sample(red, 0.7, 0.7, 0.7, tt, 0); ok(tt[0] > tt[1] + 0.2, 'mids pick up the palette colour');
+const none = C.paletteLook(['#336699', '#ffcc00'], 17, { mode: 'wash', strength: 0, keepClean: false }, 'p');
+ok(maxDiff(none.data, C.identity(17).data) < 0.01, 'zero strength is identity');
+ok(C.diagnose(C.paletteLook(['#1a1a40', '#e07a5f', '#f4f1de'], 33, { mode: 'wash', strength: 1, keepClean: true }, 'p')).every(x => x.level !== 'bad'), 'palette LUT is healthy');
+ok(C.parseHexList('Colours: #5EB6F5, 8b7cf6 #f27').length === 3, 'hex list parse');
+ok(C.sortDarkToLight(['#ffffff', '#000000'])[0] === '#000000', 'sort dark to light');
+const ex = C.extractPalette(pics(7, v => v < 0.5 ? [200, 30, 30] : [20, 20, 160]), 4); ok(ex.length === 2, 'extract finds two main colours');
 console.log(pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
