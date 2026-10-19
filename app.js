@@ -287,6 +287,19 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
   };
 
+  /* ---------- Colours arriving from Gradient Lab (link looks like #palette=5eb6f5-8b7cf6&from=gradient-lab) ---------- */
+  function fromHash() {
+    var m = /[#&]palette=([0-9a-fA-F-]+)/.exec(location.hash || ''); if (!m) return;
+    var list = m[1].split('-').filter(function (x) { return /^[0-9a-fA-F]{6}$/.test(x); }).map(function (x) { return '#' + x.toLowerCase(); }).slice(0, 12);
+    if (list.length < 2) return;
+    document.querySelector('[data-tab=palette]').click();
+    $('pSort').checked = true;
+    setStops(list);
+    say('Loaded ' + list.length + ' colours' + (/from=gradient-lab/.test(location.hash) ? ' from Gradient Lab' : '') + '. Pick a style, set the strength, then download.', 'ok');
+  }
+  window.addEventListener('hashchange', fromHash);
+
   window.CUBE_STATE = st; // for checking in the console
   setFoot(sampleImage(), 'Showing the sample picture. Drop an image here, or use the button.');
+  fromHash();
 })();
