@@ -6,6 +6,8 @@ Made by Zero3.
 
 ## Why I built Cube Lab
 
+The idea for Cube Lab came from my friend Rishi. He suggested that building something like this would be good, and I made Cube Lab from his suggestion.
+
 I watch a lot of reels, and every creator does something I want to try in my own way. One day I wanted my video in the colour theme of Blade Runner. The LUT for a look like that is hard to find. It is usually paid, and matching it by hand in DaVinci Resolve or Premiere Pro takes forever.
 
 Then I learned that a LUT can be built from images, so I built it and put it on GitHub. Now I take a screenshot of the film whose look I want, add a frame from my own work, and Cube Lab matches the colour. I download the .cube file and use it in any project.
