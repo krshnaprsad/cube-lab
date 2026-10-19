@@ -24,7 +24,7 @@ Open the app: https://krshnaprsad.github.io/cube-lab/
 
 Or download the repo and open `index.html`. Nothing to install.
 
-In Premiere Pro: Lumetri Color, Creative, Look menu, Browse, pick the file. In DaVinci Resolve: Project Settings, Color Management, Open LUT Folder, drop the file in, Update Lists, then pick it from a node's LUT menu.
+In Premiere Pro: Lumetri Color, Creative, Look menu, Browse, pick the file. In DaVinci Resolve: the downloaded file does nothing until you copy it INTO Resolve's LUT folder. Open Project Settings, Color Management, Lookup Tables, click Open LUT Folder, and paste the .cube file into that folder (or on the Color page, right-click in the LUTs panel and choose Reveal in File Explorer, then paste it there). Then right-click the LUTs panel and choose Refresh, or restart Resolve. Pick it from the LUTs panel or a node's 3D LUT menu.
 
 ## Things to know
 
@@ -45,7 +45,7 @@ I also ran three of the saved files through ffmpeg's `lut3d` filter, an independ
 
 I tested the live page in desktop Chrome with real photos: matching, blending two LUTs, and repairing a damaged file, plus the 390 px phone layout.
 
-I have **not** loaded these files into Premiere Pro or DaVinci Resolve myself, and I have not tested Safari or Firefox. The files follow the standard .cube format (header with LUT_3D_SIZE, red-fastest row order, 0 to 1 range) that both apps read, but I will not claim more than I checked. If one of them rejects a file, open an issue with the app and version.
+I have loaded these files in Premiere Pro and DaVinci Resolve Studio 20 on Windows, and they work in both. I have not tested Safari or Firefox. If an app rejects a file, open an issue with the app and version.
 
 ## Files
 
