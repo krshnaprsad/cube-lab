@@ -1,10 +1,1 @@
-{
-  "name": "cube-lab",
-  "version": "1.2.0",
-  "private": true,
-  "description": "Make, mix and fix .cube LUTs for Premiere Pro and DaVinci Resolve. Runs fully in the browser.",
-  "scripts": {
-    "test": "node cube.test.js"
-  },
-  "license": "SEE LICENSE IN LICENSE"
-}
+
