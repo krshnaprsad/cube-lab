@@ -4,6 +4,14 @@ Match a look, paint with a palette, blend LUTs, fix broken ones. One .cube file 
 
 Made by Zero3.
 
+## Why I built Cube Lab
+
+I watch a lot of reels, and every creator does something I want to try in my own way. One day I wanted my video in the colour theme of Blade Runner. The LUT for a look like that is hard to find. It is usually paid, and matching it by hand in DaVinci Resolve or Premiere Pro takes forever.
+
+Then I learned that a LUT can be built from images, so I built it and put it on GitHub. Now I take a screenshot of the film whose look I want, add a frame from my own work, and Cube Lab matches the colour. I download the .cube file and use it in any project.
+
+It is free, and I will keep adding to it.
+
 ## What it does
 
 I edit in both Premiere Pro and DaVinci Resolve, and both read the same .cube LUT file. So instead of building two plugins, I built one tool that makes the file. It runs in your browser, nothing is uploaded, and there is no account.
