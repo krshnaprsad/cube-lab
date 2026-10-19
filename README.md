@@ -12,7 +12,7 @@ It has four parts.
 
 **Look Match.** Choose a frame from your footage and a reference still with the look you want. Cube Lab builds a LUT that moves your frame toward that look. Three sliders: Strength (how far to go), Match brightness (the light and dark balance) and Match colour (tint and richness). A switch keeps your blacks and whites clean so the match does not tint them.
 
-**Palette.** Pick colours and Cube Lab paints your footage with them. Start from one of the twelve gradients from my Gradient Lab, pull a palette out of your own frame, paste hex codes, or pick colours by hand. Two styles: Gradient map swaps each brightness for a colour from your gradient (shadows get the first colour, highlights the last), and Colour wash keeps your picture's own light and dark and only takes the tint. Strength sets how far you go, and blacks and whites stay clean unless you switch that off.
+**Palette.** Pick colours and Cube Lab paints your footage with them. Start from one of the twelve gradients from my Gradient Lab, pull a palette out of your own frame, paste hex codes, or pick colours by hand. In Gradient Lab, the Export to Cube Lab button opens this tab with your gradient's colours already loaded. Two styles: Gradient map swaps each brightness for a colour from your gradient (shadows get the first colour, highlights the last), and Colour wash keeps your picture's own light and dark and only takes the tint. Strength sets how far you go, and blacks and whites stay clean unless you switch that off.
 
 **Blender.** Add two or more LUTs, set how strong each one is, put them in order, and bake them into one new file. Handy for a log fix followed by a creative look at 60%. You can also drop in your current Look Match as one of the layers.
 
