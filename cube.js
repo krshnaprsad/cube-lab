@@ -277,5 +277,66 @@
     }, title);
   };
 
+  /* ---------- Palette Look: a LUT built from a row of colours ---------- */
+  function hexToRgb(h) {
+    h = String(h).trim().replace(/^#/, '');
+    if (h.length === 3) h = h.replace(/(.)/g, '$1$1');
+    if (!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+    return [parseInt(h.slice(0, 2), 16) / 255, parseInt(h.slice(2, 4), 16) / 255, parseInt(h.slice(4, 6), 16) / 255];
+  }
+  C.hexToRgb = hexToRgb;
+  C.parseHexList = function (text) {
+    var m = String(text || '').match(/#?[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/g) || [];
+    return m.map(function (x) { return x[0] === '#' ? x : '#' + x; }).slice(0, 12);
+  };
+  function luma(r, g, b) { return 0.2126 * r + 0.7152 * g + 0.0722 * b; }
+  C.sortDarkToLight = function (hexes) {
+    return hexes.slice().sort(function (a, b) { var x = hexToRgb(a), y = hexToRgb(b); return luma(x[0], x[1], x[2]) - luma(y[0], y[1], y[2]); });
+  };
+  /* Smooth colour ramp through the stops, blended straight in screen colour like any gradient tool. */
+  C.makeRamp = function (hexes, steps) {
+    var cols = hexes.map(function (h) { return hexToRgb(h) || [0, 0, 0]; });
+    var out = new Float32Array(steps * 3), i, k, f, j;
+    for (i = 0; i < steps; i++) {
+      var x = cols.length === 1 ? 0 : i / (steps - 1) * (cols.length - 1);
+      k = cols.length === 1 ? 0 : Math.min(cols.length - 2, Math.floor(x)); f = cols.length === 1 ? 0 : x - k;
+      for (j = 0; j < 3; j++) out[i * 3 + j] = cols[k][j] + ((cols.length === 1 ? cols[0][j] : cols[k + 1][j]) - cols[k][j]) * f;
+    }
+    return out;
+  };
+  /* mode 'map': brightness picks a colour from the ramp (gradient map).
+     mode 'wash': the picture keeps its own brightness, the ramp supplies the colour. */
+  C.paletteLook = function (hexes, n, opts, title) {
+    var STEPS = 256, ramp = C.makeRamp(hexes, STEPS), lab = [0, 0, 0], rl = [0, 0, 0];
+    return C.bake(n, function (r, g, b, o) {
+      var y = clamp(luma(r, g, b), 0, 1), x = y * (STEPS - 1), i0 = Math.min(STEPS - 2, Math.floor(x)), f = x - i0;
+      var gr = ramp[i0 * 3] + (ramp[i0 * 3 + 3] - ramp[i0 * 3]) * f, gg = ramp[i0 * 3 + 1] + (ramp[i0 * 3 + 4] - ramp[i0 * 3 + 1]) * f, gb = ramp[i0 * 3 + 2] + (ramp[i0 * 3 + 5] - ramp[i0 * 3 + 2]) * f;
+      var w = opts.keepClean ? smooth(0.0, 0.08, y) * (1 - smooth(0.92, 1.0, y)) : 1;
+      var k = opts.strength * w, R, G, B;
+      if (opts.mode === 'wash') {
+        C.rgbToLab(r, g, b, lab); C.rgbToLab(gr, gg, gb, rl);
+        C.labToRgb(lab[0], lab[1] + (rl[1] - lab[1]) * k, lab[2] + (rl[2] - lab[2]) * k, o);
+        R = o[0]; G = o[1]; B = o[2];
+      } else { R = r + (gr - r) * k; G = g + (gg - g) * k; B = b + (gb - b) * k; }
+      o[0] = R; o[1] = G; o[2] = B;
+    }, title);
+  };
+  /* Pull a few main colours out of a picture (coarse buckets, most common first, skipping near-duplicates). */
+  C.extractPalette = function (px, count) {
+    var bins = {}, i, key, r, g, b;
+    for (i = 0; i < px.length; i += 16) {
+      r = px[i] >> 4; g = px[i + 1] >> 4; b = px[i + 2] >> 4; key = r * 256 + g * 16 + b;
+      var e = bins[key] || (bins[key] = { n: 0, r: 0, g: 0, b: 0 }); e.n++; e.r += px[i]; e.g += px[i + 1]; e.b += px[i + 2];
+    }
+    var list = Object.keys(bins).map(function (k2) { var e2 = bins[k2]; return { n: e2.n, c: [e2.r / e2.n, e2.g / e2.n, e2.b / e2.n] }; }).sort(function (a, b2) { return b2.n - a.n; });
+    var out = [];
+    list.forEach(function (it) {
+      if (out.length >= count) return;
+      var far = out.every(function (o2) { var d = Math.pow(o2[0] - it.c[0], 2) + Math.pow(o2[1] - it.c[1], 2) + Math.pow(o2[2] - it.c[2], 2); return d > 45 * 45; });
+      if (far) out.push(it.c);
+    });
+    return out.map(function (c) { return '#' + c.map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join(''); });
+  };
+
   if (typeof module !== 'undefined' && module.exports) module.exports = C; else root.CUBE = C;
 })(typeof self !== 'undefined' ? self : this);
