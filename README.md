@@ -1,6 +1,6 @@
 # Cube Lab
 
-Match a look, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve.
+Match a look, paint with a palette, blend LUTs, fix broken ones. One .cube file for Premiere Pro and DaVinci Resolve.
 
 Made by Zero3.
 
@@ -8,9 +8,11 @@ Made by Zero3.
 
 I edit in both Premiere Pro and DaVinci Resolve, and both read the same .cube LUT file. So instead of building two plugins, I built one tool that makes the file. It runs in your browser, nothing is uploaded, and there is no account.
 
-It has three parts.
+It has four parts.
 
 **Look Match.** Choose a frame from your footage and a reference still with the look you want. Cube Lab builds a LUT that moves your frame toward that look. Three sliders: Strength (how far to go), Match brightness (the light and dark balance) and Match colour (tint and richness). A switch keeps your blacks and whites clean so the match does not tint them.
+
+**Palette.** Pick colours and Cube Lab paints your footage with them. Start from one of the twelve gradients from my Gradient Lab, pull a palette out of your own frame, paste hex codes, or pick colours by hand. Two styles: Gradient map swaps each brightness for a colour from your gradient (shadows get the first colour, highlights the last), and Colour wash keeps your picture's own light and dark and only takes the tint. Strength sets how far you go, and blacks and whites stay clean unless you switch that off.
 
 **Blender.** Add two or more LUTs, set how strong each one is, put them in order, and bake them into one new file. Handy for a log fix followed by a creative look at 60%. You can also drop in your current Look Match as one of the layers.
 
@@ -37,7 +39,7 @@ In Premiere Pro: Lumetri Color, Creative, Look menu, Browse, pick the file. In D
 
 ## How I checked it
 
-`npm test` (Node 18 or newer, nothing to install) runs 34 checks: the file reader and writer, the order of the colour rows (red changes fastest, which is what the format needs), CRLF and byte order marks, 1D files, resizing, blending, Look Match moving a picture toward its reference, and every Doctor warning.
+`npm test` (Node 18 or newer, nothing to install) runs 42 checks: the file reader and writer, the order of the colour rows (red changes fastest, which is what the format needs), CRLF and byte order marks, 1D files, resizing, blending, Look Match moving a picture toward its reference, and every Doctor warning.
 
 On every download, the page reads the file text back and compares the picture it gives with the preview. They matched to within 1 of 255 in my runs, so the preview is the file.
 
